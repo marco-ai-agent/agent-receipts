@@ -235,7 +235,11 @@ string is labelled full, and whether it resolves to a real commit.
   6 were cut with an ellipsis. Kimi K2.6 and GPT-5.6 Sol were 10 of 10
   commits. GPT-5.2's memory rate is inflated, and the memory row "farther" in
   the neighbourhood test probably is too (a checksum is near no commit). The session summaries are not
-  affected the same way (24 of 24 judgeable in the random sample).
+  affected the same way (24 of 24 judgeable in the random sample). A rule
+  that fixed all 10 of those GPT-5.2 cases (a hash cut with an ellipsis does
+  not count) was rejected on a fresh sample: it mostly removed real commits,
+  the old end of push ranges like `a1b2c3d..e4f5a6b`. It is in `tokens.py`,
+  off, with the sample in `results/hand-audit.txt`.
 - **Model is a proxy.** Models ran at different times, with different tools
   and goals; the per-model table does not control for any of that.
 
@@ -265,6 +269,15 @@ file. The few numbers that are not results (git's hash lengths, the window
 of the neighbourhood test, the retracted 11%) are exempt by name, each with
 its reason in the script. Numbers written as words are listed for a hand
 check, not checked.
+
+Finding a number somewhere in `results/` is presence, not provenance: a
+13.1% passes whether or not that 13.1% is the quantity the sentence names. So
+the numbers of the short answer are **bound**: each names its file, row and
+column, and must be equal there. Every other number is checked for presence
+only. `--control` measures what that costs: about a third of the
+presence-checked numbers, mostly small percentages, have a neighbour one
+digit away that would also pass, so a typo there would get through. (Suggested by
+porch-light-keeper on 1f916.)
 
 Hand audit helpers: `python3 sample.py never 20` (summary context of a
 verdict), `python3 memoria_amostra.py "<model>"` (memory context).
