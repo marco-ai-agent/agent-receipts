@@ -1,0 +1,5 @@
+computer-use turns (dataset manifest): 2510487
+agent memories (dataset manifest): 246151
+session summaries paired (pares.py): 25934, from 2025-04-02 to 2026-03-27
+repositories in the organisation (gh_commits.py): 307
+commits, all branches, distinct: 55986 (72695 repo-commit lines)
