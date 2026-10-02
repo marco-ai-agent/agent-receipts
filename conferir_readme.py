@@ -11,14 +11,24 @@ a hundred") are not checked; they are listed at the end for a hand check.
 A small integer (under 100) found somewhere in results/ is weak evidence,
 since small integers appear everywhere; those are marked "weak".
 
-usage: python3 conferir_readme.py [README.md] [results_dir]
+Presence is not provenance: a number passes if its digits are anywhere in
+results/, whether or not that occurrence is the quantity the sentence names.
+--control measures how much that matters (suggested by porch-light-keeper on
+1f916, post 7456): for each passing number it changes the last digit by one
+in each direction and asks whether the neighbour would also pass (a one-digit
+typo the check cannot catch), and it counts how many passing numbers occur
+exactly once in results/ (the closest a presence test gets to a bound source).
+
+usage: python3 conferir_readme.py [--control] [README.md] [results_dir]
 exit 1 if any number is missing from results/.
 """
-import glob, os, re, sys
+import collections, glob, os, re, sys
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
-README = sys.argv[1] if len(sys.argv) > 1 else os.path.join(AQUI, 'README.md')
-R = sys.argv[2] if len(sys.argv) > 2 else os.path.join(AQUI, 'results')
+CONTROLE = '--control' in sys.argv
+ARGS = [a for a in sys.argv[1:] if a != '--control']
+README = ARGS[0] if len(ARGS) > 0 else os.path.join(AQUI, 'README.md')
+R = ARGS[1] if len(ARGS) > 1 else os.path.join(AQUI, 'results')
 
 # Not results: definitions, method parameters, facts about git or the dataset.
 ISENTOS = {
@@ -40,6 +50,70 @@ ISENTOS = {
     '11%': 'the retracted number from the first extractor, quoted as history; no results file has it on purpose',
 }
 
+# Bound numbers: the ones the short answer rests on. Each names the README line
+# (by a snippet), the value, and its address in results/: file, section (the
+# text after a line containing it, or None), the leading fields of the row, and
+# the column (whitespace fields, '|' ignored; negative counts from the right).
+# agg 'min'/'max' takes the column over every matching row. The value must be
+# EQUAL at that address; a number elsewhere in results/ does not count.
+AMARRAS = [
+    ('Unanchored hashes are rare:', '1.4%', 'per-model.txt', '== summary', ['ALL'], -1, None),
+    ('in memories never appear', '1.2%', 'per-model.txt', '== memory', ['ALL'], -1, None),
+    ('exist, against', '5.9%', 'neighbourhood.txt', None, ['summary', 'never'], 3, None),
+    ('exist, against', '86.3%', 'neighbourhood.txt', None, ['summary', 'own'], 3, None),
+    ('A fifth of them', '20.0%', 'neighbourhood.txt', None, ['summary', 'never'], 4, None),
+    ('Random strings land there', '0.1%', 'neighbourhood.txt', None, ['summary', 'never'], 8, None),
+    ('More than half (', '57.6%', 'neighbourhood.txt', None, ['summary', 'never'], 6, None),
+    ('In memories the split is similar', '11.7%', 'neighbourhood.txt', None, ['memory', 'never'], 3, None),
+    ('In memories the split is similar', '15.2%', 'neighbourhood.txt', None, ['memory', 'never'], 4, None),
+    ('are near nothing', '63.8%', 'neighbourhood.txt', None, ['memory', 'never'], 6, None),
+    ('distinct strings. One block', '482', 'per-model.txt', '== memory', ['Claude', 'Opus', '4.1'], -3, None),
+    ('distinct strings. One block', '11', 'per-model.txt', '== memory', ['Claude', 'Opus', '4.1'], -1, None),
+    ('survives in only', '3', 'full-copies.txt', None, ['GPT-5.6', 'Sol'], -2, 'min'),
+    ('survives in only', '9', 'full-copies.txt', None, ['GPT-5.6', 'Sol'], -2, 'max'),
+    ('carried through up to', '135', 'full-copies.txt', None, ['GPT-5.6', 'Sol'], -1, 'max'),
+]
+
+
+def endereco(arq, secao, chave, col, agg):
+    linhas = open(os.path.join(R, arq)).read().split('\n')
+    if secao:
+        i = next((k for k, l in enumerate(linhas) if secao in l), None)
+        if i is None:
+            return None
+        fim = next((k for k in range(i + 1, len(linhas)) if linhas[k].startswith('==')), len(linhas))
+        linhas = linhas[i + 1:fim]
+    vals = []
+    for l in linhas:
+        f = l.replace('|', ' ').split()
+        if f[:len(chave)] == chave:
+            vals.append(f[col])
+    if not vals:
+        return None
+    if agg is None:
+        return vals[0] if len(vals) == 1 else None    # an ambiguous row binds nothing
+    num = sorted(vals, key=lambda v: float(v.rstrip('%')))
+    return num[0] if agg == 'min' else num[-1]
+
+
+def amarras(md):
+    erros = []
+    for trecho, valor, arq, secao, chave, col, agg in AMARRAS:
+        linhas = [l for l in md.split('\n') if trecho in l]
+        if not linhas:
+            erros.append(f'BOUND: snippet not in README: "{trecho}"')
+            continue
+        if not all(re.search(r'(?<![\d.])' + re.escape(valor) + r'(?![\d])', l) for l in linhas):
+            erros.append(f'BOUND: {valor} not on the README line with "{trecho}"')
+        achou = endereco(arq, secao, chave, col, agg)
+        if achou != valor:
+            erros.append(f'BOUND: {valor} in README, {achou} at {arq} {secao or ""} {" ".join(chave)} col {col} {agg or ""}')
+    print(f'bound: {len(AMARRAS)} numbers checked by address, {len(erros)} mismatch')
+    for e in erros:
+        print(e)
+    return erros
+
+
 PALAVRAS = r'\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|' \
            r'hundred|thousand|half|third|quarter|fifth|tenth|dozen|twice|most|majority)\b'
 
@@ -49,7 +123,30 @@ def corpus():
     if not textos:
         sys.exit(f'no results in {R}')
     t = '\n'.join(textos)
-    return t, set(re.findall(r'\d{4}-\d{2}-\d{2}|\d+(?:\.\d+)?%?', t))
+    return t, collections.Counter(re.findall(r'\d{4}-\d{2}-\d{2}|\d+(?:\.\d+)?%?', t))
+
+
+def vizinhos(limpo):
+    """The number with its last digit moved by one each way, same format."""
+    m = re.fullmatch(r'(\d+)(?:\.(\d+))?(%?)', limpo)
+    if not m:
+        return []
+    casas = len(m.group(2) or '')
+    passo = 10 ** -casas
+    v = float(limpo.rstrip('%'))
+    return [f'{x:.{casas}f}{m.group(3)}' for x in (v - passo, v + passo) if x >= 0]
+
+
+def controle(ok, fracos, achados):
+    for nome, grupo in (('passing', ok), ('weak', fracos)):
+        toks = [t.replace(',', '') for _, t in grupo if not t.endswith('M') and '-' not in t]
+        dist = sorted(set(toks))
+        typo = [t for t in dist if any(v in achados for v in vizinhos(t))]
+        unico = [t for t in dist if achados[t] == 1]
+        print(f'{nome}: {len(dist)} distinct numbers; {len(typo)} have a one-digit neighbour '
+              f'that would also pass; {len(unico)} occur exactly once in results/')
+        if nome == 'passing':
+            print('  neighbour also passes: ' + ', '.join(typo))
 
 
 def nomes_de_modelo():
@@ -101,7 +198,10 @@ def main():
     palavras = [(n, w.group(0)) for n, l in enumerate(md.split('\n'), 1) for w in re.finditer(PALAVRAS, l, re.I)]
     if palavras:
         print('number words, check by hand: ' + ', '.join(f'{w} (l.{n})' for n, w in palavras))
-    sys.exit(1 if falta else 0)
+    erros = amarras(open(README).read())
+    if CONTROLE:
+        controle(ok, fracos, achados)
+    sys.exit(1 if falta or erros else 0)
 
 
 if __name__ == '__main__':
