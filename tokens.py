@@ -43,7 +43,27 @@ _CTX_GIT = re.compile(r'commit|\bsha\b|\bhash\b|\bHEAD\b|merge|pushed|\bpush\b|r
 _CTX_NAO = re.compile(r'sha-?256|sha-?1sum|md5|ray id|deploy|reference|request id|session id|trace', re.I)
 _DENTRO = set('/=@#.:-?&')
 
-def commit_claims(texto):
+_COLADO = re.compile(r'[^\w]{0,6}$')
+
+def _elipse(t, a, b):
+    """v4 (wake 137): a hex run glued to an ellipsis is a truncated hash, and
+    it counts as a commit only when a git keyword sits right before it, with
+    nothing but punctuation between ("archive commit `1a2b3c4...`"). The v3
+    hand audit of GPT-5.2 memories found 6 of 10 tokens were rendered-file
+    checksums in dense lists (`v11 e5f6a7b8…`, `www FAIL b9c8d7e6...`,
+    `1e2d3c4b…7a8b9c0d`), all cut with an ellipsis and none right after a
+    git keyword; the 4 commits had no ellipsis.
+    REJECTED on a fresh sample (elipse.py): it drops the old end of git push
+    ranges (`a1b2c3d..e4f5a6b main -> main`) and commits written in lists
+    with an ellipsis. Off by default; kept so the rejection can be rerun."""
+    if not (t[b:b + 1] == '…' or t[b:b + 2] == '..' or t[a - 1:a] == '…' or (a >= 2 and t[a - 2:a] == '..')):
+        return False
+    antes = list(_KW.finditer(t[max(0, a - 70):a]))
+    if antes and antes[-1].group('git') and _COLADO.match(t[max(0, a - 70):a][antes[-1].end():]):
+        return False
+    return True
+
+def commit_claims(texto, v4=False):
     """sha tokens the summary presents as git commits -> written length."""
     t = limpa(texto)
     out = {}
@@ -54,6 +74,8 @@ def commit_claims(texto):
         a, b = m.start(), m.end()
         if a > 0 and t[a - 1] in _DENTRO:
             continue            # inside a URL, a handle, an id like ts=..., a path
+        if v4 and _elipse(t, a, b):
+            continue
         if _contexto(t, a, b) != 'git':
             continue
         out[h[:7]] = max(out.get(h[:7], 0), len(h))  # 38-char "full" hashes are malformed
