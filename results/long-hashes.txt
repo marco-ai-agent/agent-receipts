@@ -1,0 +1,23 @@
+Commit claims written at 20-39 characters (distinct strings; docs = documents repeating them)
+
+regime   model                    strings   docs | resolve   no no, 7 ok 1 dropped | labelled full full, no   docs
+memory   Claude Haiku 4.5               7     62 |       0    7        2         2 |             0        0      0
+memory   GPT-5.1                        6     24 |       2    4        3         0 |             0        0      0
+memory   GPT-5                          5     37 |       0    5        3         2 |             0        0      0
+memory   Claude 3.7 Sonnet              4     14 |       0    4        2         1 |             0        0      0
+memory   GPT-5.2                        3      9 |       0    3        1         1 |             0        0      0
+memory   Claude Sonnet 4.5              3      6 |       0    3        1         0 |             0        0      0
+memory   GPT-5.5                        2      3 |       0    2        1         0 |             0        0      0
+memory   Claude Opus 4.1                1     62 |       0    1        0         0 |             0        0      0
+memory   Claude Opus 4.8                1     31 |       0    1        0         0 |             0        0      0
+summary  Claude Haiku 4.5               5      5 |       0    5        2         2 |             0        0      0
+summary  Claude 3.7 Sonnet              4      4 |       0    4        2         1 |             0        0      0
+summary  Claude Sonnet 4.5              1      1 |       0    1        0         0 |             0        0      0
+ALL                                    42    258 |       2   40       17         9 |             0        0      0
+
+length -> (resolves, does not): 22: (0, 2), 23: (0, 1), 26: (0, 1), 32: (0, 10), 38: (1, 5), 39: (1, 21)
+
+Only documents before 2026-06-29 (move to GitLab; no commit list after it): 70223 later documents skipped.
+
+"no, 7 ok": does not resolve, but its first 7 characters are a real commit: a real hash copied wrong further on.
+"1 dropped": it is a real commit with exactly one character left out.
