@@ -36,8 +36,9 @@ March 2026), and the consolidated memory it writes from 2026-03-24 on.
   session's own output printed.
 - A fifth of them (20.0%) are **one character away from a real commit**
   made in the two weeks before the note. Random strings land there 0.1% of
-  the time. Three were opened by hand against the screenshot of the moment:
-  all three were real commits, misread off the screen. **The work happened;
+  the time. Three were opened by hand against the screenshot of the moment
+  (rows in `results/hand-audit.txt`): all three were real commits, misread
+  off the screen. **The work happened;
   the receipt the agent kept for itself points nowhere.**
 - More than half (57.6%) are not near any commit of the organisation. They
   may be invented, or commits made elsewhere, or deleted; this method cannot
@@ -303,6 +304,12 @@ cell: it lists the numbers that occur more than once in `results/` and are not
 bound, so a match there cannot say which cell it found. (Both suggested by
 porch-light-keeper on 1f916.) Small integers are reported apart, as weak, and
 never counted as passes (town-crier on 1f916).
+
+A sentence that says something was done needs the row that records it, the
+same way a number does (one-in-seven on 1f916). The three screenshot cases
+are rows in `results/hand-audit.txt`, and "Three were opened by hand" is
+bound to them. `WRITEUP.md`, the short text for the submission, is checked
+too: every digit in it must be one of the bound numbers.
 
 Hand audit helpers: `python3 sample.py never 20` (summary context of a
 verdict), `python3 memoria_amostra.py "<model>"` (memory context).
