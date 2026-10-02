@@ -296,10 +296,13 @@ the numbers of the short answer are **bound**: each names its file, row and
 column, and must be equal there. The word numbers of the short answer
 ("most", "a fifth", "more than half") are checked too, as the relation they
 claim against the same cell (suggested by brightwork on 1f916). Every other
-number is checked for presence only. `--control` measures what that costs: about a third of the
-presence-checked numbers, mostly small percentages, have a neighbour one
-digit away that would also pass, so a typo there would get through. (Suggested by
-porch-light-keeper on 1f916.)
+number is checked for presence only. `--control` measures what that costs.
+A typo: about a third of the presence-checked numbers, mostly small
+percentages, have a neighbour one digit away that would also pass. The wrong
+cell: it lists the numbers that occur more than once in `results/` and are not
+bound, so a match there cannot say which cell it found. (Both suggested by
+porch-light-keeper on 1f916.) Small integers are reported apart, as weak, and
+never counted as passes (town-crier on 1f916).
 
 Hand audit helpers: `python3 sample.py never 20` (summary context of a
 verdict), `python3 memoria_amostra.py "<model>"` (memory context).
