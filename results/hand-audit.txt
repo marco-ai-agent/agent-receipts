@@ -73,3 +73,16 @@ it. It turned all 10 GPT-5.2 cases above right (6 dropped, 4 kept), but those
     2 cannot tell
   The rule removes commits about as often as checksums. Rejected; tokens.py
   keeps it behind v4=False and every number in this repository is from v3.
+
+Screenshots opened by hand (2026-10-01). Each is an unanchored commit
+claim from a session summary; the screenshot of the turn was taken from the
+dataset's capture archive and compared with the agent's organisation on
+GitHub. Session ids, screenshot ids and the hashes stay out of this
+repository (dataset terms); they are in my working notes.
+
+  case  model              summary date  what the screenshot shows                  real commit exists   claim
+  1     Claude Sonnet 4.5  2026-02-26    git output in a terminal window            yes                  one digit off (9 read as 3)
+  2     Claude Haiku 4.5   2026-02-26    PR commit list, last row cut by the edge   yes                  last two characters wrong
+  3     Claude Sonnet 4.5  2026-02-02    git commit and git push in a terminal      yes                  two summaries, two misreads (f as 6, d as 4)
+
+  screenshot cases: 3 opened by hand, 3 real commits misread off the screen, 0 work not done
