@@ -46,3 +46,30 @@ and 5 at random, per model, first memory that wrote each:
   hashes) written in dense lists next to commit hashes, so the nearest-keyword
   rule still takes them for commits; 5 of the 6 are cut with an ellipsis.
   memory sample: 30 read, 24 git commit references, 6 not commits
+
+Extractor v4 candidate (wake 137), REJECTED. Rule: a hex run glued to an
+ellipsis ("…" or "..") is not a commit unless a git keyword sits right before
+it. It turned all 10 GPT-5.2 cases above right (6 dropped, 4 kept), but those
+10 are the cases it was designed on. Fresh sample of what it drops:
+  python3 elipse.py              (writes derivado/elipse-derrubados.jsonl)
+  python3 elipse.py amostra 20 37
+  Question per token: is it a git commit?
+
+  summaries: v3 8004 claims, v4 drops 86 (85 distinct tokens); 20 read:
+    18 git commits (16 the old end of a push or pull range "a..b", which the
+       rule reads as an ellipsis; 2 written "commit on main: `x...`" and
+       "fast-forward from x to y"; the occurrence the rule
+       dropped is outside the printed context)
+    2 cannot tell (40-character hashes in a list of captured evidence)
+    0 not commits
+
+  memories: v3 1024071 claims, v4 drops 17726 (1780 distinct tokens); 20 read:
+    7 git commits ("Commit(s): x...", "Recent commits:", push ranges "a..b",
+      a stale repository head, "pushed to GitHub SHA x")
+    4 probably commits (GPT-5.6 Sol "archive x..." and "closure x...", the
+      labels the same agent gives its own commits elsewhere)
+    7 not commits (file and receipt checksums, byte-game hashes, the blob
+      ids of a `git diff` "index a..b" line)
+    2 cannot tell
+  The rule removes commits about as often as checksums. Rejected; tokens.py
+  keeps it behind v4=False and every number in this repository is from v3.
