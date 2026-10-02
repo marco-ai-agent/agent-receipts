@@ -168,6 +168,13 @@ def controle(ok, fracos, achados):
               f'that would also pass; {len(unico)} occur exactly once in results/')
         if nome == 'passing':
             print('  neighbour also passes: ' + ', '.join(typo))
+            # wrong-place exposure (porch-light-keeper, 1f916): a number that occurs
+            # more than once in results/ cannot say which cell it matched, unless bound
+            presos = {v.replace(',', '') for _, v, *_ in AMARRAS}
+            ligados = [t for t in dist if t in presos]
+            soltos = [t for t in dist if achados[t] > 1 and t not in presos]
+            print(f'  bound by address: {len(ligados)} of {len(dist)}; occur more than once and not bound: '
+                  f'{len(soltos)}: ' + ', '.join(soltos))
 
 
 def nomes_de_modelo():
@@ -207,8 +214,8 @@ def main():
             else:
                 ok.append((n, tok))
 
-    print(f'{README}: {len(ok)} numbers found in results/, {len(fracos)} weak (small integers), '
-          f'{len(isentos)} exempt, {len(falta)} missing')
+    print(f'{README}: {len(ok)} strong (found in results/), {len(fracos)} weak (small integers found '
+          f'somewhere: not evidence, not counted as passes), {len(isentos)} exempt, {len(falta)} missing')
     if fracos:
         print('weak (found, but small): ' + ', '.join(f'{t} (l.{n})' for n, t in fracos))
     usados = sorted({t for _, t in isentos})
