@@ -45,8 +45,9 @@ March 2026), and the consolidated memory it writes from 2026-03-24 on.
 - In memories, one bad hash is copied forward many times: Claude Opus 4.1's
   482 unanchored claims are 11 distinct strings. One block labels "Full" a
   string one character short of a full hash, under the line "pushed,
-  fetched, exact local=remote, clean", and is carried through more than a
-  hundred later memories.
+  fetched, exact local=remote, clean". The 39-character string itself
+  survives in only 3 to 9 later memories; its first seven characters are
+  carried through up to 135.
 
 ## Method
 
@@ -73,6 +74,10 @@ March 2026), and the consolidated memory it writes from 2026-03-24 on.
    through the same window and the same index.
 6. Hand audit: `sample.py` and `memoria_amostra.py` print the context of a
    verdict; the screenshot of the turn is in the dataset's capture archives.
+   My verdicts are in `results/hand-audit.txt`: of 25 unanchored summary
+   claims drawn at random, 24 are git commit references and 1 cannot be
+   judged from the printed context; of 30 unanchored memory claims from three
+   models, 24 are commits and 6 are not (all 6 from GPT-5.2, see the limits).
 
 ## Results
 
@@ -124,7 +129,7 @@ Distinct claims, before 2026-06-29. Source: `results/neighbourhood.txt`.
 | memory | seen only after the note | 322 | 47.8% | 3.1% | 1.6% | 47.5% | 0.1% | 5.8% |
 | memory | **never in any tool output** | 343 | 11.7% | 15.2% | 9.3% | 63.8% | 0.1% | 6.6% |
 
-Read the first row as the method's own error bar: 13% of hashes that a tool
+Read the first row as the method's own error bar: 13.1% of hashes that a tool
 *did* print in the session are not in the organisation's commit list
 (commits in repositories outside the organisation, deleted, or force-pushed
 away; hex strings a tool printed that were not commits). Against that, the
@@ -177,10 +182,15 @@ the same agent.
 The clearest case is after the GitLab move, so it cannot be resolved here,
 and I found it by reading memories by hand: a later model's memories hold a
 block that labels a 39-character string "Full", under the line "Commit was
-pushed, fetched, exact local=remote, and clean", carried forward through
-more than a hundred later memories. Git does not call a 39-character string
-the full hash. The sentence describing the verification survives every copy;
-the thing it verified is not what it says it is.
+pushed, fetched, exact local=remote, and clean". Git does not call a
+39-character string the full hash. Four such strings, all from GPT-5.6 Sol;
+counted by `copias_full.py` (source: `results/full-copies.txt`), the long
+string appears in 3, 3, 9 and 5 later memories of the same agent, and its
+first seven characters in 135, 135, 107 and 25. So what gets carried forward
+is mostly the short form, which agrees with the long one. I first wrote, from
+a hand count, that the "Full" block itself was carried through more than a
+hundred memories. That count was of the short form, and the script corrected
+it.
 
 ## Corrections, mine and a reader's
 
@@ -205,7 +215,7 @@ string is labelled full, and whether it resolves to a real commit.
   the hash. Screenshots are not text; a hash read off a screen is unanchored
   by construction. That is the point of the neighbourhood test, and also why
   this is not a fabrication rate.
-- **The 20% is not "misread off the screen".** Misreading is established for
+- **The 20.0% is not "misread off the screen".** Misreading is established for
   the three cases opened by hand. For the rest of the one-character group it
   is the most likely explanation, not a shown one.
 - **57.6% of unanchored summary claims are farther than two characters from
@@ -219,6 +229,13 @@ string is labelled full, and whether it resolves to a real commit.
   are in the per-model table but cannot be resolved here.
 - **One token class.** Commit hashes only. File names, URLs and numbers are
   claims too, but not unique enough to check this way.
+- **The extractor still misfires in one model's memories.** Reading 10
+  unanchored memory claims of GPT-5.2 by hand, 6 were content checksums
+  (video and screenshot hashes) listed right next to commit hashes; 5 of the
+  6 were cut with an ellipsis. Kimi K2.6 and GPT-5.6 Sol were 10 of 10
+  commits. GPT-5.2's memory rate is inflated, and the memory row "farther" in
+  the neighbourhood test probably is too (a checksum is near no commit). The session summaries are not
+  affected the same way (24 of 24 judgeable in the random sample).
 - **Model is a proxy.** Models ran at different times, with different tools
   and goals; the per-model table does not control for any of that.
 
@@ -241,6 +258,13 @@ only; the big files are streamed (this ran on a machine with 2 GB of RAM).
     export GITHUB_TOKEN=...          # read-only, for gh_commits.py
     sh run_all.sh                    # about an hour; writes results/
     python3 md_tabelas.py            # the README tables, from results/
+    python3 conferir_readme.py       # every number in this README, looked up in results/
+
+`conferir_readme.py` exits 1 if a number written here is not in a results
+file. The few numbers that are not results (git's hash lengths, the window
+of the neighbourhood test, the retracted 11%) are exempt by name, each with
+its reason in the script. Numbers written as words are listed for a hand
+check, not checked.
 
 Hand audit helpers: `python3 sample.py never 20` (summary context of a
 verdict), `python3 memoria_amostra.py "<model>"` (memory context).
