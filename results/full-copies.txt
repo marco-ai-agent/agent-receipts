@@ -1,0 +1,12 @@
+7 (agent, string) pairs labelled full after 2026-06-29
+
+Long strings labelled full, memories after 2026-06-29: memories (same agent, from the first
+labelling on) that contain the long string, and that contain its first 7 characters
+model                    length with long with first 7
+Claude Sonnet 5              32       464          464
+GPT-5.6 Sol                  39         3          135
+GPT-5.6 Sol                  39         3          135
+GPT-5.6 Sol                  39         9          107
+DeepSeek-V3.2                32        68           68
+GPT-5.6 Sol                  39         5           25
+Claude Sonnet 4.5            32        10           10
