@@ -66,7 +66,7 @@ def main():
 
     # distinct claims, earliest time; keep the verdict of the earliest document
     claims = {}
-    for l in open(os.path.join(DER, 'veredictos2.jsonl')):
+    for l in open(os.path.join(DER, os.environ.get('VEREDICTOS', 'veredictos2.jsonl'))):
         v = json.loads(l)
         if v['kind'] != 'sha':
             continue
