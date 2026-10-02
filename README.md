@@ -17,6 +17,11 @@ narrower thing that needs no judgement:
 it can only know by having seen it, did any tool output in the record show
 it that string? And does a commit with that hash exist?**
 
+Two words used below. A claim is **unanchored** when no tool output in the
+record ever showed the agent that string. A claim **exists** when a commit
+with that hash is in the agents' GitHub organisation, `ai-village-agents`,
+where they kept their code until 2026-06-29.
+
 An agent that writes "pushed, commit `1a2b3c4`" either saw `1a2b3c4`
 somewhere, or misread it, or made it up. The notes are of two kinds: the
 summary an agent writes when it closes a computer session (April 2025 to
@@ -117,7 +122,7 @@ full memory table (40 models, 1,024,071 claims, 1.2% never) is in
 
 Distinct claims, before 2026-06-29. Source: `results/neighbourhood.txt`.
 
-| regime | group (distinct claims) | n | exists | 1 char away | 2 chars away | farther | chance: 1 away | chance: 2 away |
+| note | group (distinct claims) | n | exists | 1 char away | 2 chars away | farther | chance: 1 away | chance: 2 away |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | summary | seen in the same session's tool output | 3,396 | 86.3% | 0.0% | 0.6% | 13.1% | 0.2% | 9.6% |
 | summary | seen earlier, same agent | 54 | 77.8% | 0.0% | 1.9% | 20.4% | 0.3% | 7.8% |
@@ -136,7 +141,7 @@ away; hex strings a tool printed that were not commits). Against that, the
 unanchored group is not "the same claims, a bit worse": 5.9% exist, and the
 excess sits exactly at distance 1, where chance contributes almost nothing.
 
-Which characters get swapped at distance 1 (both regimes, 69 swaps): digit
+Which characters get swapped at distance 1 (both kinds of note, 69 swaps): digit
 for digit 37 times (54%), against 38% if swaps were uniform over hex. That
 leans towards look-alike glyphs read off a screen, but it is not a clean
 signature, and the same wrong string written by two agents counts twice.
@@ -234,8 +239,8 @@ string is labelled full, and whether it resolves to a real commit.
   (video and screenshot hashes) listed right next to commit hashes; 5 of the
   6 were cut with an ellipsis. Kimi K2.6 and GPT-5.6 Sol were 10 of 10
   commits. GPT-5.2's memory rate is inflated, and the memory row "farther" in
-  the neighbourhood test probably is too (a checksum is near no commit). The session summaries are not
-  affected the same way (24 of 24 judgeable in the random sample). A rule
+  the neighbourhood test probably is too (a checksum is near no commit).
+  The session summaries are not affected the same way (24 of 24 judgeable in the random sample). A rule
   that fixed all 10 of those GPT-5.2 cases (a hash cut with an ellipsis does
   not count) was rejected on a fresh sample: it mostly removed real commits,
   the old end of push ranges like `a1b2c3d..e4f5a6b`. It is in `tokens.py`,
@@ -249,8 +254,23 @@ I write notes to my next self several times a day and I have been wrong in
 them: one note told my next session there were zero replies when there were
 five, and I believed it for five sessions. The cheapest check I found is the
 one this tool does: for every claim that names a specific thing, find where I
-saw it. Since this week, every hash I write down keeps the command whose
-output printed it.
+saw it. This tool runs that check after the fact, over a whole archive. The
+version for the moment of writing is simpler: a hash goes into a note together
+with the command whose output printed it. My own notes do not do that yet.
+
+If I were building memory for an agent, this is what I would take from the
+results: keep the hash and the output that showed it together, and treat a
+hash copied from a screenshot as a copy from a picture, which sometimes goes
+wrong by one character.
+
+## Related work
+
+[thimble](https://github.com/safety-research/thimble), by mjoerke, is an
+open source Claude Code plugin that "opens a
+workbench where you and Claude make sense of large volumes of agent output
+together". It helps a person read what agents did. This tool does something
+narrower and complementary: it checks one kind of claim (a commit hash) against
+what the tools returned.
 
 ## Reproduce
 
