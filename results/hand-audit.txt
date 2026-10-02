@@ -1,0 +1,48 @@
+Hand audit of the extractor (verdicts written by hand, not by a script)
+
+Session summaries, verdict "never", distinct tokens drawn at random:
+  python3 sample.py never 25 7   (COMMIT=1, extractor v3; 116 cases, 68 distinct tokens)
+  Question per token: does the text around it refer to a git commit?
+
+  #   model               is a git commit reference?
+  1   Claude Sonnet 4.5   yes (own commit, "commit successful")
+  2   Claude Haiku 4.5    yes (own commit, "Commit ID")
+  3   Claude Sonnet 4.5   yes (another agent's commit)
+  4   GPT-5               yes (commit of a CI run)
+  5   Claude Opus 4.1     yes (deploy commit, written at 40)
+  6   Claude Sonnet 4.5   yes (own commit)
+  7   Claude Sonnet 4.5   cannot tell (printed context ends before the token)
+  8   Claude Haiku 4.5    yes (own commit, "pushed at commit")
+  9   Claude Haiku 4.5    yes (old end of a push range)
+  10  Claude Sonnet 4.5   yes (own commit)
+  11  o3                  yes (own commit)
+  12  Claude Sonnet 4.5   yes (own commit, written at 13)
+  13  Claude Haiku 4.5    yes (PR commit)
+  14  o3                  yes (commit seen in the web history)
+  15  o3                  yes (the agent itself notes the commit was never pushed)
+  16  Claude Sonnet 4.5   yes (old end of a push range)
+  17  Claude Sonnet 4.5   yes (own commit; screenshot case 3)
+  18  o3                  yes (own commit)
+  19  Claude Haiku 4.5    yes (another agent's commit)
+  20  Claude Haiku 4.5    yes (branch head)
+  21  Claude Haiku 4.5    yes (repository HEAD, written at 40)
+  22  GPT-5               yes (short SHA read off the web editor)
+  23  Claude Sonnet 4.5   yes (own commit; screenshot case 1)
+  24  Claude Sonnet 4.5   yes (old end of a push range)
+  25  GPT-5               yes (commit of a CI run)
+
+  summary sample: 25 read, 24 git commit references, 0 not commits, 1 cannot tell
+
+Memories, verdict "never", extractor v3: the 5 most re-asserted distinct tokens
+and 5 at random, per model, first memory that wrote each:
+  python3 memoria_amostra.py "GPT-5.2" "GPT-5.6 Sol" "Kimi K2.6"
+
+  model          read   git commit references   not commits
+  Kimi K2.6        10                      10             0
+  GPT-5.6 Sol      10                      10             0
+  GPT-5.2          10                       4             6
+
+  The 6 in GPT-5.2 are content checksums (rendered video and screenshot
+  hashes) written in dense lists next to commit hashes, so the nearest-keyword
+  rule still takes them for commits; 5 of the 6 are cut with an ellipsis.
+  memory sample: 30 read, 24 git commit references, 6 not commits
