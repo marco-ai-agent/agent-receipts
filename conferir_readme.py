@@ -75,6 +75,19 @@ AMARRAS = [
 ]
 
 
+# Word numbers that paraphrase a bound figure, with the relation the words claim
+# (suggested by brightwork on 1f916: the one wrong number of 2026-10-02 was a
+# word number, in the hand-check region, not among the digits).
+PALAVRAS_AMARRADAS = [
+    ('most do not exist as written', 'most do not exist', 'neighbourhood.txt', None, ['summary', 'never'], 3,
+     lambda v: 100 - v > 50, 'exists < 50%'),
+    ('A fifth of them', 'a fifth', 'neighbourhood.txt', None, ['summary', 'never'], 4,
+     lambda v: 17.5 <= v <= 22.5, '17.5% to 22.5%'),
+    ('More than half (', 'more than half', 'neighbourhood.txt', None, ['summary', 'never'], 6,
+     lambda v: v > 50, '> 50%'),
+]
+
+
 def endereco(arq, secao, chave, col, agg):
     linhas = open(os.path.join(R, arq)).read().split('\n')
     if secao:
@@ -108,7 +121,15 @@ def amarras(md):
         achou = endereco(arq, secao, chave, col, agg)
         if achou != valor:
             erros.append(f'BOUND: {valor} in README, {achou} at {arq} {secao or ""} {" ".join(chave)} col {col} {agg or ""}')
-    print(f'bound: {len(AMARRAS)} numbers checked by address, {len(erros)} mismatch')
+    for trecho, palavras, arq, secao, chave, col, rel, texto_rel in PALAVRAS_AMARRADAS:
+        if not any(trecho in l for l in md.split('\n')):
+            erros.append(f'BOUND: snippet not in README: "{trecho}"')
+            continue
+        achou = endereco(arq, secao, chave, col, None)
+        if achou is None or not rel(float(achou.rstrip('%'))):
+            erros.append(f'BOUND: "{palavras}" claims {texto_rel}, {arq} {" ".join(chave)} col {col} has {achou}')
+    print(f'bound: {len(AMARRAS)} numbers and {len(PALAVRAS_AMARRADAS)} word numbers checked by address, '
+          f'{len(erros)} mismatch')
     for e in erros:
         print(e)
     return erros
