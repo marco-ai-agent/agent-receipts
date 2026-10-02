@@ -77,9 +77,16 @@ def main():
     ndocs = collections.Counter()         # same key -> documents
     amostra = {}
     depois = 0
+    tarde = collections.Counter()         # (regime, model, len, h) labelled full, after CORTE -> documents
     for regime, agent, quando, texto in docs():
         if str(quando)[:10] >= CORTE:
             depois += 1
+            vistos = set()
+            for h, rot, _ctx in longos(texto):
+                k = (regime, nm.get(agent, agent[:8]), len(h), h)
+                if rot and k not in vistos:
+                    vistos.add(k)
+                    tarde[k] += 1
             continue
         vistos = set()
         for h, rot, ctx in longos(texto):
@@ -122,6 +129,12 @@ def main():
     p('\nlength -> (resolves, does not): ' + ', '.join(
         f'{n}: ({lens[(n, True)]}, {lens[(n, False)]})' for n in sorted({n for n, _ in lens})))
     p(f'\nOnly documents before {CORTE} (move to GitLab; no commit list after it): {depois} later documents skipped.')
+    p(f'\nAfter {CORTE} (cannot be resolved; counted only): strings at 20-39 characters labelled full')
+    p(f"{'regime':8} {'model':24} {'length':>6} {'docs':>6}")
+    for (regime, model, n, _h), d in sorted(tarde.items(), key=lambda x: -x[1]):
+        p(f'{regime:8} {model:24} {n:6} {d:6}')
+    if not tarde:
+        p('(none)')
     p('\n"no, 7 ok": does not resolve, but its first 7 characters are a real commit: a real hash copied wrong further on.'
       '\n"1 dropped": it is a real commit with exactly one character left out.')
     os.makedirs(os.path.join(DER, 'final'), exist_ok=True)
