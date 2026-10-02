@@ -144,7 +144,7 @@ def main():
         print('\nd1 substitutions, real -> written (never claims):')
         print('  ' + ', '.join(f'{r}->{c} {n}' for (r, c), n in trocas.most_common()))
         dig = sum(n for (r, c), n in trocas.items() if r.isdigit() and c.isdigit())
-        print(f'  digit->digit {dig} of {sum(trocas.values())} (chance if uniform over hex: {10 * 9 / (16 * 15):.0%})')
+        print(f'  digit->digit {dig} of {sum(trocas.values())} = {dig / sum(trocas.values()):.0%} (chance if uniform over hex: {10 * 9 / (16 * 15):.0%})')
         print('  position of the swapped character (0-6):', dict(sorted(pos.items())))
 
 if __name__ == '__main__':
