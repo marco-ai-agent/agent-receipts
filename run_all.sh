@@ -12,4 +12,7 @@ python3 check2.py
 python3 report2.py sha        > results/per-model.txt
 python3 vizinhanca.py 14 1 20 > results/neighbourhood.txt
 python3 comprimento2.py       > results/long-hashes.txt
+python3 copias_full.py        > results/full-copies.txt
+python3 entradas.py           > results/inputs.txt
+python3 conferir_readme.py
 echo "done: results/"
