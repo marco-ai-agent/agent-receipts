@@ -1,0 +1,20 @@
+55986 commits, 55982 distinct prefixes, 2020-01-31 .. 2026-10-01
+
+window: 14 days before .. 1 after the document; chance = 20 random strings per claim
+regime   verdict       n  exists     d1     d2    far | chance exists     d1     d2
+memory   later       322   47.8%   3.1%   1.6%  47.5% |          0.0%   0.1%   5.8%
+memory   never       343   11.7%  15.2%   9.3%  63.8% |          0.0%   0.1%   6.6%
+memory   others    14573   90.6%   0.0%   0.5%   9.0% |          0.0%   0.2%   7.5%
+memory   self      21879   91.3%   0.0%   0.6%   8.1% |          0.0%   0.2%   7.7%
+summary  later       117   36.8%   4.3%   0.9%  58.1% |          0.0%   0.1%   4.6%
+summary  never        85    5.9%  20.0%  16.5%  57.6% |          0.0%   0.1%   6.2%
+summary  others     2082   83.0%   0.0%   0.6%  16.4% |          0.0%   0.2%   8.8%
+summary  own        3396   86.3%   0.0%   0.6%  13.1% |          0.0%   0.2%   9.6%
+summary  self         54   77.8%   0.0%   1.9%  20.4% |          0.0%   0.3%   7.8%
+
+115 never claims with a near neighbour -> derivado/vizinhos-never.jsonl
+
+d1 substitutions, real -> written (never claims):
+  3->2 9, 9->3 7, d->4 4, 0->6 3, 9->5 3, 3->9 3, 6->3 3, 6->b 3, f->6 2, 3->5 2, 1->c 2, 6->5 2, 0->d 2, 1->f 2, 4->d 2, f->1 2, b->0 2, 8->0 2, e->d 1, 6->0 1, 7->f 1, c->f 1, 9->b 1, b->d 1, b->f 1, d->e 1, e->5 1, f->c 1, a->3 1, 5->6 1, 2->5 1, c->7 1
+  digit->digit 37 of 69 (chance if uniform over hex: 38%)
+  position of the swapped character (0-6): {0: 4, 1: 11, 2: 15, 3: 6, 4: 12, 5: 4, 6: 17}
