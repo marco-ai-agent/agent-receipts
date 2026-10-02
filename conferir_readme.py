@@ -19,8 +19,13 @@ in each direction and asks whether the neighbour would also pass (a one-digit
 typo the check cannot catch), and it counts how many passing numbers occur
 exactly once in results/ (the closest a presence test gets to a bound source).
 
+If WRITEUP.md (the short text for the submission form) is present, every digit
+in it must be one of the bound values; number words that are not bound are
+listed for a hand check.
+
 usage: python3 conferir_readme.py [--control] [README.md] [results_dir]
-exit 1 if any number is missing from results/.
+exit 1 if any number is missing from results/, a bound value does not match
+its address, or WRITEUP.md has a number that is not bound.
 """
 import collections, glob, os, re, sys
 
@@ -85,7 +90,17 @@ PALAVRAS_AMARRADAS = [
      lambda v: 17.5 <= v <= 22.5, '17.5% to 22.5%'),
     ('More than half (', 'more than half', 'neighbourhood.txt', None, ['summary', 'never'], 6,
      lambda v: v > 50, '> 50%'),
+    # a past-tense act needs the row that records it (suggested by one-in-seven on 1f916)
+    ('Three were opened by hand', 'three', 'hand-audit.txt', None, ['screenshot', 'cases:'], 2,
+     lambda v: v == 3, '= 3'),
+    ('all three were real commits', 'all three', 'hand-audit.txt', None, ['screenshot', 'cases:'], 6,
+     lambda v: v == 3, '= 3'),
 ]
+
+# The short text for the submission form. Every digit in it must be one of the
+# bound values above (already checked at their address against the README), and
+# every number word must be one of the bound words; the rest are listed.
+WRITEUP = os.path.join(os.path.dirname(os.path.abspath(README)), 'WRITEUP.md')
 
 
 def endereco(arq, secao, chave, col, agg):
@@ -177,6 +192,23 @@ def controle(ok, fracos, achados):
                   f'{len(soltos)}: ' + ', '.join(soltos))
 
 
+def curto(nomes):
+    """WRITEUP.md: digits must be bound values; number words are bound or listed."""
+    md = open(WRITEUP).read()
+    for nome in nomes:
+        md = re.sub(r'\s+'.join(map(re.escape, nome.split())), 'MODEL', md)
+    md = re.sub(r'https?://\S+', 'URL', md)
+    presos = {v for _, v, *_ in AMARRAS}
+    soltos = [m.group(1) for m in re.finditer(r'(?<![\w.\-])(\d[\d,]*(?:\.\d+)?%?)', md)
+              if m.group(1) not in presos]
+    palavras = {p.lower() for _, p, *_ in PALAVRAS_AMARRADAS}
+    achadas = [w.group(0) for w in re.finditer(PALAVRAS, md, re.I)]
+    livres = [w for w in achadas if not any(w.lower() in p.split() for p in palavras)]
+    print(f'WRITEUP.md: {len(soltos)} numbers not bound' + (': ' + ', '.join(soltos) if soltos else '')
+          + f'; number words not bound, check by hand: ' + (', '.join(livres) or 'none'))
+    return soltos
+
+
 def nomes_de_modelo():
     nomes = set()
     for l in open(os.path.join(R, 'per-model.txt')):
@@ -227,9 +259,10 @@ def main():
     if palavras:
         print('number words, check by hand: ' + ', '.join(f'{w} (l.{n})' for n, w in palavras))
     erros = amarras(open(README).read())
+    soltos = curto(nomes_de_modelo()) if os.path.exists(WRITEUP) else []
     if CONTROLE:
         controle(ok, fracos, achados)
-    sys.exit(1 if falta or erros else 0)
+    sys.exit(1 if falta or erros or soltos else 0)
 
 
 if __name__ == '__main__':
