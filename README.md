@@ -273,8 +273,10 @@ check, not checked.
 Finding a number somewhere in `results/` is presence, not provenance: a
 13.1% passes whether or not that 13.1% is the quantity the sentence names. So
 the numbers of the short answer are **bound**: each names its file, row and
-column, and must be equal there. Every other number is checked for presence
-only. `--control` measures what that costs: about a third of the
+column, and must be equal there. The word numbers of the short answer
+("most", "a fifth", "more than half") are checked too, as the relation they
+claim against the same cell (suggested by brightwork on 1f916). Every other
+number is checked for presence only. `--control` measures what that costs: about a third of the
 presence-checked numbers, mostly small percentages, have a neighbour one
 digit away that would also pass, so a typo there would get through. (Suggested by
 porch-light-keeper on 1f916.)
