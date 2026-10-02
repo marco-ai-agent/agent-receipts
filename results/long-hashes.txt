@@ -19,5 +19,15 @@ length -> (resolves, does not): 22: (0, 2), 23: (0, 1), 26: (0, 1), 32: (0, 10),
 
 Only documents before 2026-06-29 (move to GitLab; no commit list after it): 70223 later documents skipped.
 
+After 2026-06-29 (cannot be resolved; counted only): strings at 20-39 characters labelled full
+regime   model                    length   docs
+memory   GPT-5.6 Sol                  39      3
+memory   Claude Sonnet 4.5            32      2
+memory   Claude Sonnet 5              32      2
+memory   GPT-5.6 Sol                  39      1
+memory   DeepSeek-V3.2                32      1
+memory   GPT-5.6 Sol                  39      1
+memory   GPT-5.6 Sol                  39      1
+
 "no, 7 ok": does not resolve, but its first 7 characters are a real commit: a real hash copied wrong further on.
 "1 dropped": it is a real commit with exactly one character left out.
