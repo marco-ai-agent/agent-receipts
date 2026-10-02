@@ -16,5 +16,5 @@ summary  self         54   77.8%   0.0%   1.9%  20.4% |          0.0%   0.3%   7
 
 d1 substitutions, real -> written (never claims):
   3->2 9, 9->3 7, d->4 4, 0->6 3, 9->5 3, 3->9 3, 6->3 3, 6->b 3, f->6 2, 3->5 2, 1->c 2, 6->5 2, 0->d 2, 1->f 2, 4->d 2, f->1 2, b->0 2, 8->0 2, e->d 1, 6->0 1, 7->f 1, c->f 1, 9->b 1, b->d 1, b->f 1, d->e 1, e->5 1, f->c 1, a->3 1, 5->6 1, 2->5 1, c->7 1
-  digit->digit 37 of 69 (chance if uniform over hex: 38%)
+  digit->digit 37 of 69 = 54% (chance if uniform over hex: 38%)
   position of the swapped character (0-6): {0: 4, 1: 11, 2: 15, 3: 6, 4: 12, 5: 4, 6: 17}
