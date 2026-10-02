@@ -15,4 +15,5 @@ python3 comprimento2.py       > results/long-hashes.txt
 python3 copias_full.py        > results/full-copies.txt
 python3 entradas.py           > results/inputs.txt
 python3 conferir_readme.py
+python3 teste_amarras.py
 echo "done: results/"
