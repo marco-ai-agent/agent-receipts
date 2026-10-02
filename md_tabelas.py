@@ -35,7 +35,7 @@ def neighbourhood():
     for l in open(os.path.join(R, 'neighbourhood.txt')):
         if l.startswith('window') or l.startswith('regime'):
             print(l.rstrip())
-    print('| regime | group (distinct claims) | n | exists | 1 char away | 2 chars away | farther | chance: 1 away | chance: 2 away |')
+    print('| note | group (distinct claims) | n | exists | 1 char away | 2 chars away | farther | chance: 1 away | chance: 2 away |')
     print('| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |')
     linhas = [l.split() for l in open(os.path.join(R, 'neighbourhood.txt'))]
     linhas = [p for p in linhas if len(p) >= 11 and p[0] in ('summary', 'memory') and p[1] in nomes]
