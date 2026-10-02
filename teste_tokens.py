@@ -18,10 +18,17 @@ casos = [
     ('- Precommit commit:\n  - Short: `5a4b3c2d`\n  - Full: `5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6`', {'5a4b3c2': 39}),
     ('- Full authoritative HEAD: **`6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d`**', {'6c5d4e3': 40}),
     ('collector SHA `4e5f6a7b...`; precommit commit `8c9dab0...`', {'8c9dab0': 7}),
+    # v4 (rejected, off by default; run with v4=True): GPT-5.2 checksum lists
+    ('bundle commit `a0b1c2d`) | - v13 `e5f6a7b8…` | - v15 `c1d2e3f4…`', {'a0b1c2d': 7}),
+    ('Set56: commit `f0e1d2c`; www FAIL `b9c8d7e6...`; control PASS `a5b4c3d2...`', {'f0e1d2c': 7}),
+    ('- control PASS: `1e2d3c4b…7a8b9c0d` | Commits: | - log commit `3f4e5d6`', {'3f4e5d6': 7}),
+    ('at that head matched **6233B / 2c3d4e5f…**', {}),
+    ('Commit: **`9a8b7c6…`** pushed', {'9a8b7c6': 7}),
 ]
 ok = True
+V4 = casos[-5:]
 for texto, esperado in casos:
-    r = commit_claims(texto)
+    r = commit_claims(texto, v4=(texto, esperado) in V4)
     if r != esperado:
         ok = False
         print('FALHOU', repr(texto), r, '!=', esperado)
