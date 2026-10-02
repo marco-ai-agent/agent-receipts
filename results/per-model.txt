@@ -61,7 +61,3 @@ Fine-Tuned Leader               352       0     312      40       0       0    0
 Grok 4                           67       0       0      66       0       1    1.5%              1
 [Temporary] Fine-tuned Leader       65       0      60       5       0       0    0.0%              0
 ALL                         1024071       0  791657  214808    5656   11950    1.2%
-
-real	0m9.775s
-user	0m9.523s
-sys	0m0.224s
