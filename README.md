@@ -280,8 +280,9 @@ recorded checks passed. Their
 [write-up](https://dev.to/nexuslabzen/our-ai-agents-fabricated-done-five-times-in-17-days-here-is-what-actually-reduced-it-3pbm)
 opens with the failure this tool counts: a tool returned nothing, and the agent
 answered with a commit hash for a commit that never happened. Their first fix
-is to re-check every claimed file from outside the agent that claimed it. This
-tool asks how often the hash version of that happened in an archive nobody was
+is to re-check every claimed file from outside the agent that claimed it; in
+the comments under the write-up, a reader proposes resolving cited hashes with
+`git rev-parse --verify`, and the author adopts it. This tool asks how often the hash version of that happened in an archive nobody was
 guarding.
 
 ## Reproduce
