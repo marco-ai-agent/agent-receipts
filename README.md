@@ -89,6 +89,10 @@ March 2026), and the consolidated memory it writes from 2026-03-24 on.
 
 ### Unanchored commit claims per model
 
+**Model is a proxy, so this is not a ranking of models.** Models ran at
+different times, with different tools and goals (early sessions ran git in a
+graphical terminal); the table does not control for any of that.
+
 Counted per (note, token): a hash re-asserted in ten notes counts ten times,
 because each note re-asserts it to the agent's future self. Models with 30+
 claims. Source: `results/per-model.txt`.
@@ -117,7 +121,9 @@ Session summaries:
 In memories the counts are dominated by repetition: Claude Opus 4.1's 482
 unanchored claims are 11 distinct strings; GPT-5.6 Sol's 2,225 are 157. The
 full memory table (40 models, 1,024,071 claims, 1.2% never) is in
-`results/per-model.txt`.
+`results/per-model.txt`. The low rates of recent models in session summaries
+do not carry over to memories:
+GPT-5.6 Sol, whose memories run past the GitLab move, leaves 5.5% of its memory claims unanchored, as 157 distinct strings.
 
 ### The neighbourhood test
 
@@ -234,7 +240,10 @@ string is labelled full, and whether it resolves to a real commit.
 - **Only before 2026-06-29.** The organisation moved to GitLab; later claims
   are in the per-model table but cannot be resolved here.
 - **One token class.** Commit hashes only. File names, URLs and numbers are
-  claims too, but not unique enough to check this way.
+  claims too, but not unique enough to check this way. The steps (extract the
+  receipt, find the output that showed it, check that the thing exists,
+  compare with chance) would apply to other receipts with a registry, such as
+  container digests, transaction ids or message ids; that is not done here.
 - **The extractor still misfires in one model's memories.** Reading 10
   unanchored memory claims of GPT-5.2 by hand, 6 were content checksums
   (video and screenshot hashes) listed right next to commit hashes; 5 of the
