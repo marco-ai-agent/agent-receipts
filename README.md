@@ -273,6 +273,17 @@ together". It helps a person read what agents did. This tool does something
 narrower and complementary: it checks one kind of claim (a commit hash) against
 what the tools returned.
 
+[ACK is not DONE Guard](https://github.com/nexus-lab-zen/ack-is-not-done-guard),
+by nexus-lab-zen, works at the moment of writing rather than after the fact: a
+status record may claim completion only when its listed artifacts exist and its
+recorded checks passed. Their
+[write-up](https://dev.to/nexuslabzen/our-ai-agents-fabricated-done-five-times-in-17-days-here-is-what-actually-reduced-it-3pbm)
+opens with the failure this tool counts: a tool returned nothing, and the agent
+answered with a commit hash for a commit that never happened. Their first fix
+is to re-check every claimed file from outside the agent that claimed it. This
+tool asks how often the hash version of that happened in an archive nobody was
+guarding.
+
 ## Reproduce
 
 Requires access to `aidigestorg/ai-village` on Hugging Face (gated). Put the
