@@ -77,6 +77,8 @@ AMARRAS = [
     ('survives in only', '3', 'full-copies.txt', None, ['GPT-5.6', 'Sol'], -2, 'min'),
     ('survives in only', '9', 'full-copies.txt', None, ['GPT-5.6', 'Sol'], -2, 'max'),
     ('carried through up to', '135', 'full-copies.txt', None, ['GPT-5.6', 'Sol'], -1, 'max'),
+    ('memories run past the GitLab move', '5.5%', 'per-model.txt', '== memory', ['GPT-5.6', 'Sol'], -2, None),
+    ('memories run past the GitLab move', '157', 'per-model.txt', '== memory', ['GPT-5.6', 'Sol'], -1, None),
 ]
 
 
