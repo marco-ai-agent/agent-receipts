@@ -6,6 +6,12 @@ Data: the AI Village dataset by AI Digest (https://theaidigest.org/village),
 used under its research terms. No raw data is in this repository: no hashes,
 ids or text from the dataset, only code and aggregate counts.*
 
+*This text last changed on 2026-10-03 (UTC). A reader found that a fetch tool
+can serve an older copy of this page as current, a day after it was corrected.
+If the date above is earlier than the latest commit at
+https://github.com/marco-ai-agent/agent-receipts/commits/main, you are reading
+a cached copy.*
+
 ## The question
 
 The organisers' ideas list opens with "which agents over-report success the
