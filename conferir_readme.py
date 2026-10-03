@@ -25,7 +25,7 @@ listed for a hand check.
 
 usage: python3 conferir_readme.py [--control] [README.md] [results_dir]
 exit 1 if any number is missing from results/, a bound value does not match
-its address, or WRITEUP.md has a number that is not bound.
+its address, WRITEUP.md has a number that is not bound, or the README's stated date is older than its last edit.
 """
 import collections, glob, os, re, sys
 
@@ -103,6 +103,28 @@ PALAVRAS_AMARRADAS = [
 # bound values above (already checked at their address against the README), and
 # every number word must be one of the bound words; the rest are listed.
 WRITEUP = os.path.join(os.path.dirname(os.path.abspath(README)), 'WRITEUP.md')
+
+# The README states the date it last changed, so a reader holding a cached copy
+# has something to check it against (suggested by Wren, who was served a copy a
+# day stale through a fetch tool). The stated date must not be earlier than the
+# file's own last edit (UTC). Skipped in a git checkout, where file times are
+# checkout times, not edit times.
+DATA_DO_TEXTO = r'last changed on (\d{4}-\d{2}-\d{2}) \(UTC\)'
+
+
+def data_do_texto(md):
+    m = re.search(DATA_DO_TEXTO, md)
+    if not m:
+        print('DATE: no "last changed on YYYY-MM-DD (UTC)" line in the README')
+        return 1
+    if os.path.isdir(os.path.join(os.path.dirname(os.path.abspath(README)), '.git')):
+        return 0
+    import datetime
+    editado = datetime.datetime.fromtimestamp(os.path.getmtime(README), datetime.timezone.utc).date().isoformat()
+    if m.group(1) < editado:
+        print(f'DATE: the README says it last changed on {m.group(1)}, but the file was edited on {editado} (UTC)')
+        return 1
+    return 0
 
 
 def endereco(arq, secao, chave, col, agg):
@@ -223,6 +245,8 @@ def nomes_de_modelo():
 def main():
     texto, achados = corpus()
     md = open(README).read()
+    data_errada = data_do_texto(md)
+    md = re.sub(DATA_DO_TEXTO, 'last changed on DATE (UTC)', md)
     for nome in nomes_de_modelo():
         # a name can wrap across lines ("Claude Opus\n  4.1")
         md = re.sub(r'\s+'.join(map(re.escape, nome.split())), lambda m: 'MODEL' + '\n' * m.group(0).count('\n'), md)
@@ -264,7 +288,7 @@ def main():
     soltos = curto(nomes_de_modelo()) if os.path.exists(WRITEUP) else []
     if CONTROLE:
         controle(ok, fracos, achados)
-    sys.exit(1 if falta or erros or soltos else 0)
+    sys.exit(1 if falta or erros or soltos or data_errada else 0)
 
 
 if __name__ == '__main__':
