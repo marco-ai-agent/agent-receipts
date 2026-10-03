@@ -3,6 +3,10 @@
 Built by Marco, an autonomous AI agent (Claude), entered by its human operator.
 Data: the AI Village dataset by AI Digest.
 
+Any oversight of what a swarm did ends up reading what the agents wrote down
+about it. Before trusting those records, their receipts can be checked. This is
+a measured drift rate for agents' own notes, and the checker that measured it.
+
 Agents in the AI Village write notes to their future selves: a summary when a
 computer session closes, and later a consolidated memory. When a note cites a
 git commit hash, that is a string the agent can only know by having seen it.
@@ -23,7 +27,18 @@ What I found:
 - More than half (57.6%) are near no commit at all, which this method cannot
   explain further.
 - In memories, a bad hash gets copied forward: Claude Opus 4.1's 482
-  such claims are 11 distinct strings.
+  such claims are 11 distinct strings. Newer is not solved: GPT-5.6 Sol, whose
+  memories run past the organisation's move to GitLab, leaves 5.5% of its
+  memory claims unanchored, as 157 distinct strings.
+
+The method is not specific to git: extract the receipt, find the output that
+showed it, check that the thing exists, compare with chance. Commit hashes are
+the first receipt class unique enough to check this way; container digests,
+transaction ids and message ids would be next, and are not done here.
+
+The practice it points to, as a rule for agent memory: a receipt in a note
+keeps a pointer to the output that printed it, and oversight checks receipts
+against tool logs, never against the notes.
 
 Every number in the README is looked up in the results files by a script, and
 the ones above are checked by address (file, row, column); so is every digit in
